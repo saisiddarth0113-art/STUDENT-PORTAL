@@ -1,121 +1,147 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Student Support Portal</title>
+  <title>Student Portal</title>
 
   <style>
     body {
-      margin: 0;
+      margin:0;
       font-family: Arial;
-      background: #eef2f7;
+      background: linear-gradient(135deg,#1e3c72,#2a5298);
+      color:white;
     }
 
-    header {
-      background: #2c3e50;
-      color: white;
-      padding: 15px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
+    /* TOPBAR */
+    .topbar {
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      padding:15px;
+      background:rgba(0,0,0,0.4);
     }
 
-    .main {
-      display: flex;
-      height: 90vh;
+    .menu-btn {
+      font-size:24px;
+      cursor:pointer;
     }
 
-    .sidebar {
-      width: 220px;
-      background: #34495e;
-      color: white;
-      padding: 20px;
+    /* MENU */
+    .menu {
+      position:fixed;
+      left:-250px;
+      top:0;
+      width:250px;
+      height:100%;
+      background:rgba(0,0,0,0.9);
+      padding:20px;
+      transition:0.3s;
     }
 
-    .sidebar button {
-      width: 100%;
-      margin: 10px 0;
-      padding: 10px;
-      border: none;
-      background: #1abc9c;
-      color: white;
-      cursor: pointer;
-      border-radius: 5px;
+    .menu.active { left:0; }
+
+    .menu button {
+      width:100%;
+      padding:10px;
+      margin:10px 0;
+      border:none;
+      background:#00c6ff;
+      color:white;
     }
 
-    .content {
-      flex: 1;
-      padding: 20px;
-      overflow-y: auto;
+    /* PROFILE */
+    #profile img {
+      border-radius:50%;
+      cursor:pointer;
     }
 
-    .section { display: none; }
-    .active { display: block; }
-
-    input, textarea {
-      width: 60%;
-      padding: 10px;
-      margin: 10px 0;
+    #profileMenu {
+      display:none;
+      position:absolute;
+      right:20px;
+      top:60px;
+      background:white;
+      color:black;
+      padding:15px;
+      border-radius:10px;
     }
 
-    button.submit {
-      background: #3498db;
-      padding: 10px 20px;
-      border: none;
-      color: white;
-      cursor: pointer;
-    }
+    /* MAIN */
+    .main { padding:20px; }
 
     .card {
-      background: white;
-      padding: 15px;
-      margin-top: 10px;
-      border-radius: 10px;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+      background:rgba(255,255,255,0.1);
+      padding:15px;
+      margin-top:10px;
+      border-radius:10px;
     }
+
+    .section { display:none; }
+    .active { display:block; }
+
   </style>
 </head>
 
 <body>
 
-<header>
-  <span>🎓 Student Support Portal</span>
-  <div>
-    <button onclick="login()">Login</button>
-    <span id="userInfo"></span>
-  </div>
-</header>
+<!-- MENU -->
+<div id="menu" class="menu">
+  <h2>Menu</h2>
+  <button onclick="show('doubt')">❓ Doubts</button>
+  <button onclick="show('notes')">📂 Notes</button>
+  <button onclick="show('admin')">⚙️ Admin</button>
+</div>
 
+<!-- TOPBAR -->
+<div class="topbar">
+  <span class="menu-btn" onclick="toggleMenu()">☰</span>
+  <span>🎓 Student Portal</span>
+
+  <div id="profileBox">
+    <button onclick="login()" id="loginBtn">Login</button>
+
+    <div id="profile" style="display:none;" onclick="toggleProfile()">
+      <img id="profilePic" width="35">
+    </div>
+  </div>
+</div>
+
+<!-- PROFILE MENU -->
+<div id="profileMenu">
+  <img id="menuPic" width="60">
+  <p id="menuName"></p>
+  <p id="menuEmail"></p>
+  <button onclick="logout()">Logout</button>
+</div>
+
+<!-- MAIN -->
 <div class="main">
 
-  <div class="sidebar">
-    <button onclick="showSection('home')">🏠 Home</button>
-    <button onclick="showSection('doubt')">❓ Doubts</button>
-    <button onclick="showSection('problem')">😓 Problems</button>
+  <div id="doubt" class="section active">
+    <h2>Doubts</h2>
+    <input id="doubtInput" placeholder="Ask doubt">
+    <button onclick="addDoubt()">Post</button>
+    <div id="doubtList"></div>
   </div>
 
-  <div class="content">
+  <div id="notes" class="section">
+    <h2>Notes</h2>
 
-    <div id="home" class="section active">
-      <h2>Welcome 🔥</h2>
-      <p>Student support portal for 11th & 12th</p>
-    </div>
+    <select id="subject">
+      <option>Maths</option>
+      <option>Physics</option>
+      <option>Chemistry</option>
+    </select>
 
-    <div id="doubt" class="section">
-      <h2>Ask Doubt</h2>
-      <input type="text" id="doubtInput" placeholder="Enter doubt">
-      <br>
-      <button class="submit" onclick="addDoubt()">Post</button>
-      <div id="doubtList"></div>
-    </div>
+    <input type="file" id="fileInput">
+    <button onclick="uploadFile()">Upload</button>
 
-    <div id="problem" class="section">
-      <h2>Share Problem</h2>
-      <textarea id="problemInput"></textarea>
-      <br>
-      <button class="submit" onclick="addProblem()">Submit</button>
-      <div id="problemList"></div>
-    </div>
+    <div id="filesList"></div>
+  </div>
 
+  <div id="admin" class="section">
+    <h2>Admin Panel</h2>
+    <button onclick="clearDoubts()">Delete Doubts</button>
+    <button onclick="clearNotes()">Delete Notes</button>
   </div>
 
 </div>
@@ -124,6 +150,7 @@
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-storage.js"></script>
 
 <script>
 const firebaseConfig = {
@@ -137,87 +164,189 @@ const firebaseConfig = {
 
 firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
+const storage = firebase.storage();
+
+let currentUser=null;
+const ADMIN_EMAIL="yourgmail@gmail.com";
+
+// MENU
+function toggleMenu(){
+  menu.classList.toggle("active");
+}
 
 // LOGIN
-function login() {
-  var provider = new firebase.auth.GoogleAuthProvider();
+function login(){
+  let provider=new firebase.auth.GoogleAuthProvider();
   firebase.auth().signInWithRedirect(provider);
 }
 
-// SHOW USER
-firebase.auth().onAuthStateChanged(user => {
-  if (user) {
-    document.getElementById("userInfo").innerText = user.displayName;
+// AUTH
+firebase.auth().onAuthStateChanged(user=>{
+  if(user){
+    currentUser=user;
+
+    loginBtn.style.display="none";
+    profile.style.display="block";
+
+    profilePic.src=user.photoURL;
+    menuPic.src=user.photoURL;
+
+    menuName.innerText=user.displayName;
+    menuEmail.innerText=user.email;
+
+    if(user.email!==ADMIN_EMAIL){
+      document.getElementById("admin").style.display="none";
+    }
   }
 });
 
-// SWITCH PAGE
-function showSection(id) {
-  document.querySelectorAll(".section").forEach(s => s.classList.remove("active"));
-  document.getElementById(id).classList.add("active");
+// PROFILE MENU
+function toggleProfile(){
+  profileMenu.style.display =
+    profileMenu.style.display==="none"?"block":"none";
 }
 
-// ADD DOUBT
-function addDoubt() {
-  let text = document.getElementById("doubtInput").value;
-  if (!text) return;
+function logout(){
+  firebase.auth().signOut();
+  location.reload();
+}
 
-  let user = firebase.auth().currentUser;
+// NAV
+function show(id){
+  document.querySelectorAll(".section").forEach(s=>s.classList.remove("active"));
+  document.getElementById(id).classList.add("active");
+  toggleMenu();
+}
+
+// DOUBTS
+function addDoubt(){
+  let text=doubtInput.value;
+  if(!text)return;
 
   db.collection("doubts").add({
-    text: text,
-    user: user ? user.displayName : "Anonymous",
-    time: new Date()
+    text,
+    user: currentUser?currentUser.displayName:"Anonymous",
+    time:new Date(),
+    likes:0
   });
 
-  document.getElementById("doubtInput").value = "";
+  doubtInput.value="";
 }
 
-// ADD PROBLEM
-function addProblem() {
-  let text = document.getElementById("problemInput").value;
-  if (!text) return;
+db.collection("doubts").orderBy("time","desc")
+.onSnapshot(snap=>{
+  doubtList.innerHTML="";
 
-  let user = firebase.auth().currentUser;
+  snap.forEach(doc=>{
+    let d=doc.data();
 
-  db.collection("problems").add({
-    text: text,
-    user: user ? user.displayName : "Anonymous",
-    time: new Date()
-  });
+    let div=document.createElement("div");
+    div.className="card";
 
-  document.getElementById("problemInput").value = "";
-}
+    div.innerHTML=`
+      <b>${d.user}</b>: ${d.text}<br>
+      👍 ${d.likes}
+      <button onclick="like('${doc.id}')">Like</button>
 
-// LOAD DOUBTS
-db.collection("doubts").orderBy("time", "desc")
-.onSnapshot(snapshot => {
-  let list = document.getElementById("doubtList");
-  list.innerHTML = "";
+      <br>
+      <input id="r-${doc.id}" placeholder="Reply">
+      <button onclick="reply('${doc.id}')">Reply</button>
+      <div id="rep-${doc.id}"></div>
+    `;
 
-  snapshot.forEach(doc => {
-    let d = doc.data();
-    let div = document.createElement("div");
-    div.className = "card";
-    div.innerText = d.user + ": " + d.text;
-    list.appendChild(div);
+    doubtList.appendChild(div);
+
+    db.collection("doubts").doc(doc.id)
+    .collection("replies").orderBy("time")
+    .onSnapshot(rSnap=>{
+      let rDiv=document.getElementById("rep-"+doc.id);
+      rDiv.innerHTML="";
+      rSnap.forEach(r=>{
+        let p=document.createElement("p");
+        let data=r.data();
+        p.innerText=data.user+": "+data.text;
+        rDiv.appendChild(p);
+      });
+    });
+
   });
 });
 
-// LOAD PROBLEMS
-db.collection("problems").orderBy("time", "desc")
-.onSnapshot(snapshot => {
-  let list = document.getElementById("problemList");
-  list.innerHTML = "";
-
-  snapshot.forEach(doc => {
-    let d = doc.data();
-    let div = document.createElement("div");
-    div.className = "card";
-    div.innerText = d.user + ": " + d.text;
-    list.appendChild(div);
+function like(id){
+  db.collection("doubts").doc(id).update({
+    likes:firebase.firestore.FieldValue.increment(1)
   });
+}
+
+function reply(id){
+  let text=document.getElementById("r-"+id).value;
+
+  db.collection("doubts").doc(id)
+  .collection("replies").add({
+    text,
+    user: currentUser?currentUser.displayName:"Anonymous",
+    time:new Date()
+  });
+
+  document.getElementById("r-"+id).value="";
+}
+
+// NOTES
+function uploadFile(){
+  let file=fileInput.files[0];
+  let subject=subject.value;
+
+  let ref=storage.ref("notes/"+subject+"/"+file.name);
+
+  ref.put(file).then(()=>{
+    ref.getDownloadURL().then(url=>{
+      db.collection("notes").add({
+        name:file.name,
+        url,
+        subject
+      });
+    });
+  });
+}
+
+db.collection("notes").onSnapshot(snap=>{
+  filesList.innerHTML="";
+  let group={};
+
+  snap.forEach(doc=>{
+    let d=doc.data();
+    if(!group[d.subject]) group[d.subject]=[];
+    group[d.subject].push(d);
+  });
+
+  for(let s in group){
+    let h=document.createElement("h3");
+    h.innerText=s;
+    filesList.appendChild(h);
+
+    group[s].forEach(f=>{
+      let a=document.createElement("a");
+      a.href=f.url;
+      a.innerText=f.name;
+      a.target="_blank";
+      filesList.appendChild(a);
+      filesList.appendChild(document.createElement("br"));
+    });
+  }
 });
+
+// ADMIN
+function clearDoubts(){
+  db.collection("doubts").get().then(snap=>{
+    snap.forEach(doc=>doc.ref.delete());
+  });
+}
+
+function clearNotes(){
+  db.collection("notes").get().then(snap=>{
+    snap.forEach(doc=>doc.ref.delete());
+  });
+}
 </script>
 
 </body>
