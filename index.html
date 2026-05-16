@@ -1,0 +1,218 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+  <title>Student Support Portal</title>
+
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial;
+      background: #eef2f7;
+    }
+
+    header {
+      background: #2c3e50;
+      color: white;
+      padding: 15px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .main {
+      display: flex;
+      height: 90vh;
+    }
+
+    .sidebar {
+      width: 220px;
+      background: #34495e;
+      color: white;
+      padding: 20px;
+    }
+
+    .sidebar button {
+      width: 100%;
+      margin: 10px 0;
+      padding: 10px;
+      border: none;
+      background: #1abc9c;
+      color: white;
+      cursor: pointer;
+      border-radius: 5px;
+    }
+
+    .content {
+      flex: 1;
+      padding: 20px;
+      overflow-y: auto;
+    }
+
+    .section { display: none; }
+    .active { display: block; }
+
+    input, textarea {
+      width: 60%;
+      padding: 10px;
+      margin: 10px 0;
+    }
+
+    button.submit {
+      background: #3498db;
+      padding: 10px 20px;
+      border: none;
+      color: white;
+      cursor: pointer;
+    }
+
+    .card {
+      background: white;
+      padding: 15px;
+      margin-top: 10px;
+      border-radius: 10px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    }
+  </style>
+</head>
+
+<body>
+
+<header>
+  <span>🎓 Student Support Portal</span>
+  <div>
+    <button onclick="login()">Login</button>
+    <span id="userInfo"></span>
+  </div>
+</header>
+
+<div class="main">
+
+  <div class="sidebar">
+    <button onclick="showSection('home')">🏠 Home</button>
+    <button onclick="showSection('doubt')">❓ Doubts</button>
+    <button onclick="showSection('problem')">😓 Problems</button>
+  </div>
+
+  <div class="content">
+
+    <div id="home" class="section active">
+      <h2>Welcome 🔥</h2>
+      <p>Student support portal for 11th & 12th</p>
+    </div>
+
+    <div id="doubt" class="section">
+      <h2>Ask Doubt</h2>
+      <input type="text" id="doubtInput" placeholder="Enter doubt">
+      <br>
+      <button class="submit" onclick="addDoubt()">Post</button>
+      <div id="doubtList"></div>
+    </div>
+
+    <div id="problem" class="section">
+      <h2>Share Problem</h2>
+      <textarea id="problemInput"></textarea>
+      <br>
+      <button class="submit" onclick="addProblem()">Submit</button>
+      <div id="problemList"></div>
+    </div>
+
+  </div>
+
+</div>
+
+<!-- Firebase -->
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+
+<script>
+const firebaseConfig = {
+  apiKey: "AIzaSyA0sVeQZeXyXJZhynmk5SndML2SpbEbrOk",
+  authDomain: "student-portal-8acee.firebaseapp.com",
+  projectId: "student-portal-8acee",
+};
+
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
+
+// LOGIN
+function login() {
+  var provider = new firebase.auth.GoogleAuthProvider();
+  firebase.auth().signInWithPopup(provider)
+  .then(result => {
+    document.getElementById("userInfo").innerText =
+      result.user.displayName;
+  });
+}
+
+// SWITCH PAGE
+function showSection(id) {
+  document.querySelectorAll(".section").forEach(s => s.classList.remove("active"));
+  document.getElementById(id).classList.add("active");
+}
+
+// ADD DOUBT
+function addDoubt() {
+  let text = document.getElementById("doubtInput").value;
+  if (!text) return;
+
+  let user = firebase.auth().currentUser;
+
+  db.collection("doubts").add({
+    text: text,
+    user: user ? user.displayName : "Anonymous",
+    time: new Date()
+  });
+
+  document.getElementById("doubtInput").value = "";
+}
+
+// ADD PROBLEM
+function addProblem() {
+  let text = document.getElementById("problemInput").value;
+  if (!text) return;
+
+  let user = firebase.auth().currentUser;
+
+  db.collection("problems").add({
+    text: text,
+    user: user ? user.displayName : "Anonymous",
+    time: new Date()
+  });
+
+  document.getElementById("problemInput").value = "";
+}
+
+// LOAD DOUBTS
+db.collection("doubts").orderBy("time", "desc")
+.onSnapshot(snapshot => {
+  let list = document.getElementById("doubtList");
+  list.innerHTML = "";
+
+  snapshot.forEach(doc => {
+    let d = doc.data();
+    let div = document.createElement("div");
+    div.className = "card";
+    div.innerText = d.user + ": " + d.text;
+    list.appendChild(div);
+  });
+});
+
+// LOAD PROBLEMS
+db.collection("problems").orderBy("time", "desc")
+.onSnapshot(snapshot => {
+  let list = document.getElementById("problemList");
+  list.innerHTML = "";
+
+  snapshot.forEach(doc => {
+    let d = doc.data();
+    let div = document.createElement("div");
+    div.className = "card";
+    div.innerText = d.user + ": " + d.text;
+    list.appendChild(div);
+  });
+});
+</script>
+
+</body>
+</html>
