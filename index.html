@@ -1,23 +1,62 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Student Portal</title>
+  <title>Student Portal Ultimate</title>
 
   <style>
     body {
       margin:0;
-      font-family: Arial;
-      background: linear-gradient(135deg,#1e3c72,#2a5298);
+      font-family: 'Segoe UI';
       color:white;
+      overflow-x:hidden;
+    }
+
+    /* BACKGROUND SLIDER */
+    #bgSlider {
+      position: fixed;
+      width:100%;
+      height:100%;
+      z-index:-1;
+      overflow:hidden;
+    }
+
+    .slide {
+      position:absolute;
+      width:100%;
+      height:100%;
+      background-size:cover;
+      background-position:center;
+      opacity:0;
+      animation:slideShow 20s infinite;
+    }
+
+    .slide:nth-child(1){animation-delay:0s;}
+    .slide:nth-child(2){animation-delay:5s;}
+    .slide:nth-child(3){animation-delay:10s;}
+    .slide:nth-child(4){animation-delay:15s;}
+
+    @keyframes slideShow {
+      0%{opacity:0; transform:scale(1);}
+      10%{opacity:1;}
+      30%{opacity:1; transform:scale(1.1);}
+      40%{opacity:0;}
+      100%{opacity:0;}
+    }
+
+    #bgSlider::after{
+      content:"";
+      position:absolute;
+      width:100%;
+      height:100%;
+      background:rgba(0,0,0,0.6);
     }
 
     /* TOPBAR */
     .topbar {
       display:flex;
       justify-content:space-between;
-      align-items:center;
       padding:15px;
-      background:rgba(0,0,0,0.4);
+      background:rgba(0,0,0,0.5);
     }
 
     .menu-btn {
@@ -25,34 +64,41 @@
       cursor:pointer;
     }
 
-    /* MENU */
+    /* FLOAT MENU */
     .menu {
       position:fixed;
-      left:-250px;
-      top:0;
-      width:250px;
-      height:100%;
-      background:rgba(0,0,0,0.9);
+      left:20px;
+      top:50%;
+      transform:translateY(-50%) scale(0.8);
+      width:220px;
       padding:20px;
+      background:rgba(0,0,0,0.6);
+      backdrop-filter:blur(15px);
+      border-radius:15px;
+      opacity:0;
+      pointer-events:none;
       transition:0.3s;
     }
 
-    .menu.active { left:0; }
+    .menu.active {
+      opacity:1;
+      pointer-events:auto;
+      transform:translateY(-50%) scale(1);
+    }
 
     .menu button {
       width:100%;
-      padding:10px;
+      padding:12px;
       margin:10px 0;
       border:none;
-      background:#00c6ff;
+      border-radius:8px;
+      background:linear-gradient(45deg,#00c6ff,#0072ff);
       color:white;
+      cursor:pointer;
     }
 
     /* PROFILE */
-    #profile img {
-      border-radius:50%;
-      cursor:pointer;
-    }
+    #profile img { border-radius:50%; cursor:pointer; }
 
     #profileMenu {
       display:none;
@@ -78,10 +124,27 @@
     .section { display:none; }
     .active { display:block; }
 
+    /* ABOUT */
+    #aboutSection {
+      margin-top:50px;
+      background:rgba(255,255,255,0.1);
+      padding:20px;
+      border-radius:15px;
+    }
+
+    .motivation p, .career p {
+      margin:10px 0;
+      padding:10px;
+      background:rgba(0,0,0,0.4);
+      border-radius:8px;
+    }
+
   </style>
 </head>
 
 <body>
+
+<div id="bgSlider"></div>
 
 <!-- MENU -->
 <div id="menu" class="menu">
@@ -96,9 +159,8 @@
   <span class="menu-btn" onclick="toggleMenu()">☰</span>
   <span>🎓 Student Portal</span>
 
-  <div id="profileBox">
+  <div>
     <button onclick="login()" id="loginBtn">Login</button>
-
     <div id="profile" style="display:none;" onclick="toggleProfile()">
       <img id="profilePic" width="35">
     </div>
@@ -118,23 +180,20 @@
 
   <div id="doubt" class="section active">
     <h2>Doubts</h2>
-    <input id="doubtInput" placeholder="Ask doubt">
+    <input id="doubtInput">
     <button onclick="addDoubt()">Post</button>
     <div id="doubtList"></div>
   </div>
 
   <div id="notes" class="section">
     <h2>Notes</h2>
-
     <select id="subject">
       <option>Maths</option>
       <option>Physics</option>
       <option>Chemistry</option>
     </select>
-
     <input type="file" id="fileInput">
     <button onclick="uploadFile()">Upload</button>
-
     <div id="filesList"></div>
   </div>
 
@@ -142,6 +201,27 @@
     <h2>Admin Panel</h2>
     <button onclick="clearDoubts()">Delete Doubts</button>
     <button onclick="clearNotes()">Delete Notes</button>
+  </div>
+
+  <!-- ABOUT + MOTIVATION -->
+  <div id="aboutSection">
+    <h2>📘 About</h2>
+    <p>Helping students with doubts, notes and growth.</p>
+
+    <h2>🔥 Motivation</h2>
+    <div class="motivation">
+      <p>Success comes from consistency.</p>
+      <p>Keep learning daily.</p>
+      <p>Believe in yourself.</p>
+    </div>
+
+    <h2>🚀 Career</h2>
+    <div class="career">
+      <p>IT → Coding, AI</p>
+      <p>Core → Mechanical, Civil</p>
+      <p>Commerce → Finance</p>
+      <p>Creative → Design</p>
+    </div>
   </div>
 
 </div>
@@ -154,25 +234,37 @@
 
 <script>
 const firebaseConfig = {
-  apiKey: "AIzaSyA0sVeQZeXyXJZhynmkS5ndML2SpbEbrOk",
-  authDomain: "student-portal-8acee.firebaseapp.com",
-  projectId: "student-portal-8acee",
-  storageBucket: "student-portal-8acee.appspot.com",
-  messagingSenderId: "319905377108",
-  appId: "1:319905377108:web:5363e53a0236ae20f136c1"
+  apiKey: "YOUR_KEY",
+  authDomain: "YOUR_DOMAIN",
+  projectId: "YOUR_ID",
+  storageBucket: "YOUR_BUCKET",
+  messagingSenderId: "YOUR_ID",
+  appId: "YOUR_APP_ID"
 };
 
 firebase.initializeApp(firebaseConfig);
-const db = firebase.firestore();
-const storage = firebase.storage();
+const db=firebase.firestore();
+const storage=firebase.storage();
 
 let currentUser=null;
-const ADMIN_EMAIL="yourgmail@gmail.com";
+
+// BG IMAGES
+const imgs=[
+"https://images.unsplash.com/photo-1523240795612-9a054b0db644",
+"https://images.unsplash.com/photo-1503676260728-1c00da094a0b",
+"https://images.unsplash.com/photo-1496307042754-b4aa456c4a2d",
+"https://images.unsplash.com/photo-1523580494863-6f3031224c94"
+];
+
+imgs.forEach(src=>{
+  let d=document.createElement("div");
+  d.className="slide";
+  d.style.backgroundImage=`url(${src})`;
+  bgSlider.appendChild(d);
+});
 
 // MENU
-function toggleMenu(){
-  menu.classList.toggle("active");
-}
+function toggleMenu(){menu.classList.toggle("active");}
 
 // LOGIN
 function login(){
@@ -180,36 +272,24 @@ function login(){
   firebase.auth().signInWithRedirect(provider);
 }
 
-// AUTH
 firebase.auth().onAuthStateChanged(user=>{
   if(user){
     currentUser=user;
-
     loginBtn.style.display="none";
     profile.style.display="block";
-
     profilePic.src=user.photoURL;
     menuPic.src=user.photoURL;
-
     menuName.innerText=user.displayName;
     menuEmail.innerText=user.email;
-
-    if(user.email!==ADMIN_EMAIL){
-      document.getElementById("admin").style.display="none";
-    }
   }
 });
 
-// PROFILE MENU
+// PROFILE
 function toggleProfile(){
-  profileMenu.style.display =
-    profileMenu.style.display==="none"?"block":"none";
+  profileMenu.style.display=
+  profileMenu.style.display==="none"?"block":"none";
 }
-
-function logout(){
-  firebase.auth().signOut();
-  location.reload();
-}
+function logout(){firebase.auth().signOut();location.reload();}
 
 // NAV
 function show(id){
@@ -222,129 +302,70 @@ function show(id){
 function addDoubt(){
   let text=doubtInput.value;
   if(!text)return;
-
   db.collection("doubts").add({
     text,
-    user: currentUser?currentUser.displayName:"Anonymous",
+    user:currentUser?currentUser.displayName:"Anonymous",
     time:new Date(),
     likes:0
   });
-
   doubtInput.value="";
 }
 
 db.collection("doubts").orderBy("time","desc")
-.onSnapshot(snap=>{
+.onSnapshot(s=>{
   doubtList.innerHTML="";
-
-  snap.forEach(doc=>{
+  s.forEach(doc=>{
     let d=doc.data();
-
     let div=document.createElement("div");
     div.className="card";
-
     div.innerHTML=`
       <b>${d.user}</b>: ${d.text}<br>
       👍 ${d.likes}
       <button onclick="like('${doc.id}')">Like</button>
-
-      <br>
-      <input id="r-${doc.id}" placeholder="Reply">
-      <button onclick="reply('${doc.id}')">Reply</button>
-      <div id="rep-${doc.id}"></div>
     `;
-
     doubtList.appendChild(div);
-
-    db.collection("doubts").doc(doc.id)
-    .collection("replies").orderBy("time")
-    .onSnapshot(rSnap=>{
-      let rDiv=document.getElementById("rep-"+doc.id);
-      rDiv.innerHTML="";
-      rSnap.forEach(r=>{
-        let p=document.createElement("p");
-        let data=r.data();
-        p.innerText=data.user+": "+data.text;
-        rDiv.appendChild(p);
-      });
-    });
-
   });
 });
 
 function like(id){
-  db.collection("doubts").doc(id).update({
-    likes:firebase.firestore.FieldValue.increment(1)
-  });
-}
-
-function reply(id){
-  let text=document.getElementById("r-"+id).value;
-
   db.collection("doubts").doc(id)
-  .collection("replies").add({
-    text,
-    user: currentUser?currentUser.displayName:"Anonymous",
-    time:new Date()
-  });
-
-  document.getElementById("r-"+id).value="";
+  .update({likes:firebase.firestore.FieldValue.increment(1)});
 }
 
 // NOTES
 function uploadFile(){
   let file=fileInput.files[0];
-  let subject=subject.value;
-
-  let ref=storage.ref("notes/"+subject+"/"+file.name);
-
+  let sub=subject.value;
+  let ref=storage.ref("notes/"+sub+"/"+file.name);
   ref.put(file).then(()=>{
     ref.getDownloadURL().then(url=>{
-      db.collection("notes").add({
-        name:file.name,
-        url,
-        subject
-      });
+      db.collection("notes").add({name:file.name,url,subject:sub});
     });
   });
 }
 
-db.collection("notes").onSnapshot(snap=>{
+db.collection("notes").onSnapshot(s=>{
   filesList.innerHTML="";
-  let group={};
-
-  snap.forEach(doc=>{
+  s.forEach(doc=>{
     let d=doc.data();
-    if(!group[d.subject]) group[d.subject]=[];
-    group[d.subject].push(d);
+    let a=document.createElement("a");
+    a.href=d.url;
+    a.innerText=d.name;
+    a.target="_blank";
+    filesList.appendChild(a);
+    filesList.appendChild(document.createElement("br"));
   });
-
-  for(let s in group){
-    let h=document.createElement("h3");
-    h.innerText=s;
-    filesList.appendChild(h);
-
-    group[s].forEach(f=>{
-      let a=document.createElement("a");
-      a.href=f.url;
-      a.innerText=f.name;
-      a.target="_blank";
-      filesList.appendChild(a);
-      filesList.appendChild(document.createElement("br"));
-    });
-  }
 });
 
 // ADMIN
 function clearDoubts(){
-  db.collection("doubts").get().then(snap=>{
-    snap.forEach(doc=>doc.ref.delete());
+  db.collection("doubts").get().then(s=>{
+    s.forEach(doc=>doc.ref.delete());
   });
 }
-
 function clearNotes(){
-  db.collection("notes").get().then(snap=>{
-    snap.forEach(doc=>doc.ref.delete());
+  db.collection("notes").get().then(s=>{
+    s.forEach(doc=>doc.ref.delete());
   });
 }
 </script>
