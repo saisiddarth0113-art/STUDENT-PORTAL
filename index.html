@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html>
 <head>
   <title>Student Support Portal</title>
@@ -127,9 +127,12 @@
 
 <script>
 const firebaseConfig = {
-  apiKey: "AIzaSyA0sVeQZeXyXJZhynmk5SndML2SpbEbrOk",
+  apiKey: "AIzaSyA0sVeQZeXyXJZhynmkS5ndML2SpbEbrOk",
   authDomain: "student-portal-8acee.firebaseapp.com",
   projectId: "student-portal-8acee",
+  storageBucket: "student-portal-8acee.appspot.com",
+  messagingSenderId: "319905377108",
+  appId: "1:319905377108:web:5363e53a0236ae20f136c1"
 };
 
 firebase.initializeApp(firebaseConfig);
@@ -138,12 +141,15 @@ const db = firebase.firestore();
 // LOGIN
 function login() {
   var provider = new firebase.auth.GoogleAuthProvider();
-  firebase.auth().signInWithPopup(provider)
-  .then(result => {
-    document.getElementById("userInfo").innerText =
-      result.user.displayName;
-  });
+  firebase.auth().signInWithRedirect(provider);
 }
+
+// SHOW USER
+firebase.auth().onAuthStateChanged(user => {
+  if (user) {
+    document.getElementById("userInfo").innerText = user.displayName;
+  }
+});
 
 // SWITCH PAGE
 function showSection(id) {
