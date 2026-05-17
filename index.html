@@ -6,14 +6,13 @@
   <style>
     body {
       margin:0;
-      font-family: 'Segoe UI';
+      font-family:'Segoe UI';
       color:white;
       overflow-x:hidden;
     }
 
-    /* BACKGROUND SLIDER */
     #bgSlider {
-      position: fixed;
+      position:fixed;
       width:100%;
       height:100%;
       z-index:-1;
@@ -51,7 +50,6 @@
       background:rgba(0,0,0,0.6);
     }
 
-    /* TOPBAR */
     .topbar {
       display:flex;
       justify-content:space-between;
@@ -59,12 +57,8 @@
       background:rgba(0,0,0,0.5);
     }
 
-    .menu-btn {
-      font-size:24px;
-      cursor:pointer;
-    }
+    .menu-btn { font-size:24px; cursor:pointer; }
 
-    /* FLOAT MENU */
     .menu {
       position:fixed;
       left:20px;
@@ -97,7 +91,6 @@
       cursor:pointer;
     }
 
-    /* PROFILE */
     #profile img { border-radius:50%; cursor:pointer; }
 
     #profileMenu {
@@ -111,7 +104,6 @@
       border-radius:10px;
     }
 
-    /* MAIN */
     .main { padding:20px; }
 
     .card {
@@ -124,7 +116,6 @@
     .section { display:none; }
     .active { display:block; }
 
-    /* ABOUT */
     #aboutSection {
       margin-top:50px;
       background:rgba(255,255,255,0.1);
@@ -139,6 +130,14 @@
       border-radius:8px;
     }
 
+    .quotes p {
+      margin:10px 0;
+      padding:12px;
+      background:rgba(255,255,255,0.15);
+      border-left:4px solid #00c6ff;
+      border-radius:8px;
+      font-style:italic;
+    }
   </style>
 </head>
 
@@ -146,7 +145,6 @@
 
 <div id="bgSlider"></div>
 
-<!-- MENU -->
 <div id="menu" class="menu">
   <h2>Menu</h2>
   <button onclick="show('doubt')">❓ Doubts</button>
@@ -154,7 +152,6 @@
   <button onclick="show('admin')">⚙️ Admin</button>
 </div>
 
-<!-- TOPBAR -->
 <div class="topbar">
   <span class="menu-btn" onclick="toggleMenu()">☰</span>
   <span>🎓 Student Portal</span>
@@ -167,7 +164,6 @@
   </div>
 </div>
 
-<!-- PROFILE MENU -->
 <div id="profileMenu">
   <img id="menuPic" width="60">
   <p id="menuName"></p>
@@ -175,12 +171,11 @@
   <button onclick="logout()">Logout</button>
 </div>
 
-<!-- MAIN -->
 <div class="main">
 
   <div id="doubt" class="section active">
     <h2>Doubts</h2>
-    <input id="doubtInput">
+    <input id="doubtInput" placeholder="Ask your doubt...">
     <button onclick="addDoubt()">Post</button>
     <div id="doubtList"></div>
   </div>
@@ -203,19 +198,26 @@
     <button onclick="clearNotes()">Delete Notes</button>
   </div>
 
-  <!-- ABOUT + MOTIVATION -->
+  <!-- ABOUT + QUOTES -->
   <div id="aboutSection">
     <h2>📘 About</h2>
     <p>Helping students with doubts, notes and growth.</p>
 
     <h2>🔥 Motivation</h2>
     <div class="motivation">
-      <p>Success comes from consistency.</p>
+      <p>Consistency is the key to success.</p>
       <p>Keep learning daily.</p>
-      <p>Believe in yourself.</p>
     </div>
 
-    <h2>🚀 Career</h2>
+    <h2>🚀 Study Quotes</h2>
+    <div class="quotes">
+      <p>“Arise, awake, and stop not till the goal is reached.” — Swami Vivekananda</p>
+      <p>“All power is within you; you can do anything.” — Swami Vivekananda</p>
+      <p>“Dream, dream, dream. Dreams transform into thoughts and actions.” — A.P.J. Abdul Kalam</p>
+      <p>“If you want to shine like a sun, first burn like a sun.” — A.P.J. Abdul Kalam</p>
+    </div>
+
+    <h2>🎯 Career</h2>
     <div class="career">
       <p>IT → Coding, AI</p>
       <p>Core → Mechanical, Civil</p>
@@ -226,7 +228,6 @@
 
 </div>
 
-<!-- Firebase -->
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
@@ -243,12 +244,14 @@ const firebaseConfig = {
 };
 
 firebase.initializeApp(firebaseConfig);
+
 const db=firebase.firestore();
 const storage=firebase.storage();
+const auth=firebase.auth();
 
 let currentUser=null;
 
-// BG IMAGES
+/* BG */
 const imgs=[
 "https://images.unsplash.com/photo-1523240795612-9a054b0db644",
 "https://images.unsplash.com/photo-1503676260728-1c00da094a0b",
@@ -263,16 +266,18 @@ imgs.forEach(src=>{
   bgSlider.appendChild(d);
 });
 
-// MENU
+/* MENU */
 function toggleMenu(){menu.classList.toggle("active");}
 
-// LOGIN
+/* LOGIN FIX */
 function login(){
-  let provider=new firebase.auth.GoogleAuthProvider();
-  firebase.auth().signInWithRedirect(provider);
+  const provider=new firebase.auth.GoogleAuthProvider();
+  auth.signInWithPopup(provider)
+    .catch(err=>alert(err.message));
 }
 
-firebase.auth().onAuthStateChanged(user=>{
+/* AUTH */
+auth.onAuthStateChanged(user=>{
   if(user){
     currentUser=user;
     loginBtn.style.display="none";
@@ -284,30 +289,37 @@ firebase.auth().onAuthStateChanged(user=>{
   }
 });
 
-// PROFILE
+/* PROFILE */
 function toggleProfile(){
-  profileMenu.style.display=
+  profileMenu.style.display =
   profileMenu.style.display==="none"?"block":"none";
 }
-function logout(){firebase.auth().signOut();location.reload();}
 
-// NAV
+function logout(){
+  auth.signOut();
+  location.reload();
+}
+
+/* NAV */
 function show(id){
   document.querySelectorAll(".section").forEach(s=>s.classList.remove("active"));
   document.getElementById(id).classList.add("active");
   toggleMenu();
 }
 
-// DOUBTS
+/* DOUBTS */
 function addDoubt(){
+  if(!currentUser){alert("Login first");return;}
   let text=doubtInput.value;
   if(!text)return;
+
   db.collection("doubts").add({
     text,
-    user:currentUser?currentUser.displayName:"Anonymous",
+    user:currentUser.displayName,
     time:new Date(),
     likes:0
   });
+
   doubtInput.value="";
 }
 
@@ -318,11 +330,13 @@ db.collection("doubts").orderBy("time","desc")
     let d=doc.data();
     let div=document.createElement("div");
     div.className="card";
+
     div.innerHTML=`
       <b>${d.user}</b>: ${d.text}<br>
       👍 ${d.likes}
       <button onclick="like('${doc.id}')">Like</button>
     `;
+
     doubtList.appendChild(div);
   });
 });
@@ -332,11 +346,14 @@ function like(id){
   .update({likes:firebase.firestore.FieldValue.increment(1)});
 }
 
-// NOTES
+/* NOTES */
 function uploadFile(){
   let file=fileInput.files[0];
+  if(!file)return;
+
   let sub=subject.value;
   let ref=storage.ref("notes/"+sub+"/"+file.name);
+
   ref.put(file).then(()=>{
     ref.getDownloadURL().then(url=>{
       db.collection("notes").add({name:file.name,url,subject:sub});
@@ -357,12 +374,13 @@ db.collection("notes").onSnapshot(s=>{
   });
 });
 
-// ADMIN
+/* ADMIN */
 function clearDoubts(){
   db.collection("doubts").get().then(s=>{
     s.forEach(doc=>doc.ref.delete());
   });
 }
+
 function clearNotes(){
   db.collection("notes").get().then(s=>{
     s.forEach(doc=>doc.ref.delete());
