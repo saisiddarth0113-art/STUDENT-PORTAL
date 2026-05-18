@@ -351,9 +351,7 @@ function like(id){
   let ref = db.collection("doubts").doc(id);
 
   ref.get().then(doc=>{
-    let data = doc.data();
-
-    // safe fallback
+    let data = doc.data() || {};
     let likedBy = data.likedBy || [];
 
     if(likedBy.includes(userId)){
@@ -362,8 +360,8 @@ function like(id){
     }
 
     ref.update({
-      likes: firebase.firestore.FieldValue.increment(1),
-      likedBy: firebase.firestore.FieldValue.arrayUnion(userId)
+      likes: (data.likes || 0) + 1,
+      likedBy: [...likedBy, userId]
     });
   });
 }
