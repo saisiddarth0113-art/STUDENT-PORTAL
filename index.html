@@ -353,8 +353,10 @@ function like(id){
   ref.get().then(doc=>{
     let data = doc.data();
 
-    // already liked check
-    if(data.likedBy && data.likedBy.includes(userId)){
+    // safe fallback
+    let likedBy = data.likedBy || [];
+
+    if(likedBy.includes(userId)){
       alert("Already liked 😄");
       return;
     }
@@ -365,7 +367,6 @@ function like(id){
     });
   });
 }
-
 /* NOTES */
 function uploadFile(){
   let file=fileInput.files[0];
