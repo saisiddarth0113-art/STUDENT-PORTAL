@@ -342,8 +342,28 @@ db.collection("doubts").orderBy("time","desc")
 });
 
 function like(id){
-  db.collection("doubts").doc(id)
-  .update({likes:firebase.firestore.FieldValue.increment(1)});
+  if(!currentUser){
+    alert("Login first");
+    return;
+  }
+
+  let userId = currentUser.uid;
+  let ref = db.collection("doubts").doc(id);
+
+  ref.get().then(doc=>{
+    let data = doc.data();
+
+    // already liked check
+    if(data.likedBy && data.likedBy.includes(userId)){
+      alert("Already liked 😄");
+      return;
+    }
+
+    ref.update({
+      likes: firebase.firestore.FieldValue.increment(1),
+      likedBy: firebase.firestore.FieldValue.arrayUnion(userId)
+    });
+  });
 }
 
 /* NOTES */
