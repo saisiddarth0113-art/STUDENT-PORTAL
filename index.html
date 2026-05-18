@@ -375,13 +375,31 @@ db.collection("notes").onSnapshot(s=>{
 });
 
 /* ADMIN */
+const ADMIN_EMAIL = "saisiddarth0113@gmail.com"; // 👈 nee email pettu
+
+function isAdmin(){
+  return currentUser && currentUser.email === ADMIN_EMAIL;
+}
+
+/* DELETE DOUBTS */
 function clearDoubts(){
+  if(!isAdmin()){
+    alert("❌ You are not admin");
+    return;
+  }
+
   db.collection("doubts").get().then(s=>{
     s.forEach(doc=>doc.ref.delete());
   });
 }
 
+/* DELETE NOTES */
 function clearNotes(){
+  if(!isAdmin()){
+    alert("❌ You are not admin");
+    return;
+  }
+
   db.collection("notes").get().then(s=>{
     s.forEach(doc=>doc.ref.delete());
   });
