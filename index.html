@@ -139,6 +139,67 @@
       border-radius:8px;
       font-style:italic;
     }
+
+    /* MOBILE VIEW */
+@media screen and (max-width: 768px){
+
+  .topbar{
+    padding:12px;
+    font-size:14px;
+  }
+
+  .menu{
+    width:180px;
+    left:10px;
+    padding:15px;
+  }
+
+  .main{
+    padding:12px;
+  }
+
+  input, select, button{
+    width:100%;
+    margin-top:8px;
+    box-sizing:border-box;
+  }
+
+  button{
+    padding:12px;
+    font-size:15px;
+  }
+
+  .card{
+    padding:12px;
+    font-size:14px;
+  }
+
+  #profileMenu{
+    right:10px;
+    width:220px;
+  }
+
+  #aboutSection{
+    padding:15px;
+  }
+
+  h2{
+    font-size:20px;
+  }
+
+  .quotes p,
+  .motivation p,
+  .career p{
+    font-size:14px;
+  }
+
+  #chatbot{
+    width:90% !important;
+    right:5%;
+    bottom:10px;
+  }
+
+}
   </style>
 </head>
 
@@ -423,67 +484,6 @@ function clearNotes(){
   db.collection("notes").get().then(s=>{
     s.forEach(doc=>doc.ref.delete());
   });
-}
-
-  /* MOBILE VIEW */
-@media screen and (max-width: 768px){
-
-  .topbar{
-    padding:12px;
-    font-size:14px;
-  }
-
-  .menu{
-    width:180px;
-    left:10px;
-    padding:15px;
-  }
-
-  .main{
-    padding:12px;
-  }
-
-  input, select, button{
-    width:100%;
-    margin-top:8px;
-    box-sizing:border-box;
-  }
-
-  button{
-    padding:12px;
-    font-size:15px;
-  }
-
-  .card{
-    padding:12px;
-    font-size:14px;
-  }
-
-  #profileMenu{
-    right:10px;
-    width:220px;
-  }
-
-  #aboutSection{
-    padding:15px;
-  }
-
-  h2{
-    font-size:20px;
-  }
-
-  .quotes p,
-  .motivation p,
-  .career p{
-    font-size:14px;
-  }
-
-  #chatbot{
-    width:90% !important;
-    right:5%;
-    bottom:10px;
-  }
-
 }
 </script>
 
