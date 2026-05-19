@@ -2,7 +2,7 @@
 <html>
 <head>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Student Portal Ultimate</title>
+  <title>STUDYXFLOW Ultimate</title>
 
   <style>
   body{
@@ -58,7 +58,9 @@
       display:flex;
       justify-content:space-between;
       padding:15px;
-      background:rgba(0,0,0,0.5);
+      background:rgba(10,10,25,0.7);
+      backdrop-filter:blur(12px);
+      border-bottom:1px solid rgba(255,255,255,0.1);
     }
 
     .menu-btn { font-size:24px; cursor:pointer; }
@@ -109,13 +111,26 @@
     }
 
     .main { padding:20px; }
-
-    .card {
-      background:rgba(255,255,255,0.1);
-      padding:15px;
-      margin-top:10px;
-      border-radius:10px;
+    
+    .card{
+      background:rgba(255,255,255,0.08);
+      padding:18px;
+      margin-top:15px;
+      border-radius:18px;
+      backdrop-filter:blur(10px);
+      border:1px solid rgba(255,255,255,0.1);
+      box-shadow:0 0 20px rgba(0,0,0,0.3);
+      transition:0.3s;
+      
     }
+    
+    .card:hover{
+      transform:translateY(-5px);
+    }
+
+
+
+    
 
     .section { display:none; }
     .active { display:block; }
@@ -170,6 +185,11 @@
   button{
     padding:12px;
     font-size:15px;
+  }
+  
+  button{
+    min-height:44px;
+    font-size:16px;
   }
 
   .card{
@@ -385,18 +405,32 @@ input, select, button{
 }
 
 /* MOBILE */
-@media(max-width:768px){
-
-  #logoText{
-    font-size:32px;
+@media (max-width:768px){
+  .menu{
+    width:85%;
+    left:50%;
+    transform:translate(-50%, -50%) scale(0.8);
   }
 
-  #loader{
-    width:55px;
-    height:55px;
+  .menu.active{
+    transform:translate(-50%, -50%) scale(1);
   }
-
 }
+
+html, body {
+  height: 100%;
+  min-height: 100vh;
+}
+
+body {
+  min-height: 100dvh; /* modern mobile fix */
+}
+
+body{
+  overscroll-behavior: none;
+  touch-action: manipulation;
+}
+
   </style>
 </head>
 
@@ -405,7 +439,7 @@ input, select, button{
 <!-- SPLASH SCREEN -->
 <div id="splash">
 
-  <h1 id="logoText">🎓 STUDENT PORTAL</h1>
+  <h1 id="logoText">🎓 STUDYXFLOW</h1>
 
 </div>
 
@@ -420,7 +454,7 @@ input, select, button{
 
 <div class="topbar">
   <span class="menu-btn" onclick="toggleMenu()">☰</span>
-  <span>🎓 Student Portal</span>
+  <span>🎓 STUDYXFLOW</span>
 
   <div>
     <button onclick="login()" id="loginBtn">Login</button>
@@ -618,7 +652,7 @@ function like(id){
 
   ref.get().then(doc=>{
     let data = doc.data() || {};
-    let likedBy = data.likedBy || [];
+    Array.isArray(data.likedBy) ? data.likedBy : []
 
     if(likedBy.includes(userId)){
       alert("Already liked 😄");
@@ -689,19 +723,17 @@ function clearNotes(){
     s.forEach(doc=>doc.ref.delete());
   });
 }
-<script>
 
 /* SPLASH SCREEN AUTO CLOSE */
 
 window.addEventListener("load", ()=>{
 
   setTimeout(()=>{
-    splash.style.display="none";
+    document.getElementById("splash").style.display="none";
   },2000);
 
 });
 
-</script>
 </script>
 
 </body>
