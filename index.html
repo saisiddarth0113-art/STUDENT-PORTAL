@@ -5,12 +5,15 @@
   <title>Student Portal Ultimate</title>
 
   <style>
-    body {
-      margin:0;
-      font-family:'Segoe UI';
-      color:white;
-      overflow-x:hidden;
-    }
+  body{
+  margin:0;
+  font-family:'Segoe UI';
+  color:white;
+  overflow-x:hidden;
+  overflow-y:auto;
+  min-height:100vh;
+  background:#000;
+}
 
     #bgSlider {
       position:fixed;
@@ -197,6 +200,97 @@
     width:90% !important;
     right:5%;
     bottom:10px;
+  }
+
+}
+
+    /* MOBILE FIX */
+html, body{
+  width:100%;
+  height:auto;
+  overflow-x:hidden;
+  overflow-y:auto;
+}
+
+/* MAIN CONTENT */
+.main{
+  padding:20px;
+  min-height:100vh;
+  box-sizing:border-box;
+}
+
+/* INPUTS */
+input, select, button{
+  max-width:100%;
+  box-sizing:border-box;
+}
+
+/* MOBILE VIEW */
+@media screen and (max-width:768px){
+
+  body{
+    font-size:14px;
+  }
+
+  .topbar{
+    padding:12px;
+    flex-wrap:wrap;
+  }
+
+  .main{
+    padding:15px;
+  }
+
+  .card{
+    width:100%;
+    padding:12px;
+    margin-top:15px;
+    box-sizing:border-box;
+  }
+
+  input{
+    width:100%;
+    padding:12px;
+    margin-top:8px;
+  }
+
+  button{
+    width:100%;
+    padding:12px;
+    margin-top:8px;
+    font-size:15px;
+  }
+
+  select{
+    width:100%;
+    padding:10px;
+    margin-top:8px;
+  }
+
+  #aboutSection{
+    margin-top:30px;
+    padding:15px;
+  }
+
+  .quotes p,
+  .motivation p,
+  .career p{
+    font-size:14px;
+    line-height:1.6;
+  }
+
+  /* MENU */
+  .menu{
+    width:200px;
+    left:10px;
+    top:55%;
+  }
+
+  /* PROFILE MENU */
+  #profileMenu{
+    width:220px;
+    right:10px;
+    top:70px;
   }
 
 }
